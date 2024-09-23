@@ -1,2 +1,2 @@
-# UlysesLM
-A small-language model implementing Markov chains based on the novel Ulyses by James Joyce.
+# UlyssesLM
+A small-language model implementing Markov chains based on the novel *Ulysses* by James Joyce.
