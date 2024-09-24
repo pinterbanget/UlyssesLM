@@ -1,6 +1,6 @@
 # UlyssesLM: a Markov chain model based on the novel "Ulysses".
 # Ryanson Jonathan s2570340
-# Joseph Gill s
+# Joseph Gill s1910643
 # Fransiskus Budi Kurnia Agung s2670828
 
 # This code will do two main tasks:
