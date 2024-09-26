@@ -11,7 +11,7 @@
 # from the novel.
 
 # Sets the working directories for the coders.
-setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
+setwd("/Users/fransiskusbudi/ulysseslm") # Ryan's path
 # Feel free to add above for your paths @Joseph @Frans
 
 # -------------------------------------------------------
@@ -75,7 +75,7 @@ a_sep_lower <- tolower(a_sep)
 a_unique <- unique(a_sep_lower)
 
 # Converts words from the text to indices corresponding to a_unique.
-index_match <- match(a_splitted_lower, a_unique)
+index_match <- match(a_sep_lower, a_unique)
 
 # Counts how many times each unique word appears,
 # then filters it to only show the top m words.
@@ -93,11 +93,13 @@ a_unique_1000 <- a_unique[freq_m]
 mlag <- 4
 
 # Finds words from text that are in the top m words.
-common_word_match <- match(a_splitted_lower, a_unique_1000)
+common_word_match <- match(a_sep_lower, a_unique_1000)
 
 # Todo: 
 # Code above is until 7a) in practical-1.pdf.
 # Continue until 7b) below this text.
+
+
 # For 8 and 9, continue under Part 2) Markov Model.
 
 # -------------------------------------------------------
