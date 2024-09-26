@@ -11,7 +11,9 @@
 # from the novel.
 
 # Sets the working directories for the coders.
-setwd("/Users/fransiskusbudi/ulysseslm") # Ryan's path
+#setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
+setwd("/Users/josephgill/Documents/UlyssesLM") #Joseph's path
+
 # Feel free to add above for your paths @Joseph @Frans
 
 # -------------------------------------------------------
