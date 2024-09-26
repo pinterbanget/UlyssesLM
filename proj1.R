@@ -11,10 +11,14 @@
 # from the novel.
 
 # Sets the working directories for the coders.
-#setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
-setwd("/Users/josephgill/Documents/UlyssesLM") #Joseph's path
+setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
+# setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
+# setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
 
-# Feel free to add above for your paths @Joseph @Frans
+# Defines constants for the program.
+m <- 1000 # How many most common words are we using for the model?
+mlag <- 4 # The number of maximum "lag" for model generation
+nw <- 50 # How many words will the model generate?
 
 # -------------------------------------------------------
 # 1) Data Preprocessing
@@ -26,6 +30,7 @@ setwd("/Users/josephgill/Documents/UlyssesLM") #Joseph's path
 
 # ***
 # Section i) Reading and Cleaning Text
+
 # Reads the file.
 a <- scan("4300-0.txt", what = "character", skip = 73, nlines = 32858 - 73,
           fileEncoding = "UTF-8")
@@ -35,6 +40,7 @@ a <- gsub("_(", "", a, fixed = TRUE)
 
 # ***
 # Section ii) Separating Punctuations
+
 split_funct <- function(vec) {
   # Separates punctuations from words.
   # Input: vector of strings
@@ -70,6 +76,7 @@ a_sep <- split_funct(a)
 
 # ***
 # Section iii) Finding Most Used Words
+
 # Makes all words lowercase.
 a_sep_lower <- tolower(a_sep)
 
@@ -81,61 +88,83 @@ index_match <- match(a_sep_lower, a_unique)
 
 # Counts how many times each unique word appears,
 # then filters it to only show the top m words.
-# For this case, m ≈ 1000.
-m <- 1000
 freq <- tabulate(index_match)
 freq_threshold <- freq[order(freq, decreasing = TRUE)][m]
 freq_m <- freq >= freq_threshold
 
 # Stores the top m used words.
-a_unique_1000 <- a_unique[freq_m] #b in the instruction
-
-# Defines mlag, the maximum lag considered for this model.
-# To match instructions, the value 4 is set.
-mlag <- 4
+a_unique_1000 <- a_unique[freq_m]
 
 # Finds words from text that are in the top m words.
-common_word_match <- match(a_sep_lower, a_unique_1000)
+b <- match(a_sep_lower, a_unique_1000)
 
-# Todo: 
-# Code above is until 7a) in practical-1.pdf.
-# Continue until 7b) below this text.
-# Create function to create the shifted matrix
-create_shifted_matrix <- function(j, mlag=4){
-  n <- length(j) # Calculate number of rows in the matrix
-# Create the M matrix with the criteria
-  M <- matrix(nrow = n, ncol = mlag + 1)
-  return(M)
-}
+# Creates a matrix with the total number of words from the novel
+# as the row size, and (mlag + 1) as the column size.
+M <- matrix(nrow = length(b), ncol = (mlag + 1))
 
-M<- create_shifted_matrix(common_word_match,mlag)
-print(nrow(M))
+# Fills the matrix with the index of the most common words as the first column,
+# a shifted-by-1 index as the second column, a shifted-by-2 index as the third,
+# and so on.
 for (i in 1:ncol(M)){
-  shift <- i-1
-  if(i == 1) {
-    M[, i] <- common_word_match
-  } else {
-    shifted_common_word_match <- c(rep(NA,times=shift),common_word_match[1:(length(common_word_match)-shift)])
-    M[,i]<-shifted_common_word_match
-  #M[,i] <- common_word_match
-  }
+  shifted_b <- c(b[i:length(b)], rep(NA, times = i - 1))
+  M[, i] <- shifted_b
 }
 
-#cut the M matrix for the shifted values
-M_cut <- M[(mlag+1):nrow(M),]
-
-
-# 7b not done yet, continue later
-length1 <- length(M)
-
-# For 8 and 9, continue under Part 2) Markov Model.
-
-#generate a random words index
-nw <- sample(common_word_match[!is.na(common_word_match)],1)
-print(a_sep_lower[nw])
-
+# Cuts the last mlag rows of the matrix, since it's filled with NA values.
+M <- M[1:(nrow(M) - mlag), ]
 
 
 # -------------------------------------------------------
 # 2) Markov Model
 # The codes below are for creating a Markov model based on the text.
+# This includes:
+# i) Markov model creation
+# ii) Frequency-based model creation
+# iii) Case-sensitive Markov model creation (yes, we're going for the
+# extra 3 marks.)
+
+# ***
+# Section i) Markov Model Creation
+
+# First, we need to generate a random first word.
+first_word_index <- sample(b[!is.na(b)], 1)
+
+# Then, we use "cat" to show the first word.
+cat("Markov model generation result: ")
+cat(a_unique_1000[first_word_index])
+
+# Todo:
+# 1. Continue the Markov model generation, using first_word as the basis
+# for the next (nw - 1) words.
+# Find how to get indices of the previous word, then selecting by random.
+# Uncomment the following snippet to continue:
+
+# for (i in 2:nw) {
+#   for (j in mlag:1) {
+#     if (i > j) {
+
+#     }
+#   }
+# }
+
+
+# ***
+# Section ii) Frequency-Based Model Creation
+
+# For this model, a sample is directly taken from the whole novel.
+# This sample is continuously taken until nw words have been generated.
+cat("\nFrequency-based model generation result:")
+
+for (i in 1:nw) {
+  word <- sample(a_sep_lower, 1)
+  if (length(grep("[,.;!:?]", word, fixed = FALSE)) > 0) {
+    cat(word)
+  } else {
+    cat(paste(" ", word, sep = ""))
+  }
+}
+
+# ***
+# Section iii) Case-Sensitive Markov Model Creation
+
+# Todo: get the initial Markov model going first lmaoooo
