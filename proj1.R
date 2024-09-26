@@ -163,7 +163,7 @@ for (i in 1:nw) {
   word <- sample(a_sep_lower, 1)
 
   # Checks if word is in the most common words.
-  while (length(grepl(word, a_unique_1000, fixed = TRUE)) == 0) {
+  while (length(grep(word, a_unique_1000, fixed = TRUE)) == 0) {
     word <- sample(a_sep_lower, 1)
   }
 
