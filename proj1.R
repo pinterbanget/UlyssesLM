@@ -152,11 +152,22 @@ cat(a_unique_1000[first_word_index])
 # Section ii) Frequency-Based Model Creation
 
 # For this model, a sample is directly taken from the whole novel.
-# This sample is continuously taken until nw words have been generated.
+# Then, the model validates the sample by checking if said sample
+# is in the most common words. If not, a new sample is taken.
+# This is done repeatedly until nw words have been generated.
+
 cat("\nFrequency-based model generation result:")
 
 for (i in 1:nw) {
-  word <- sample(a_unique_1000, 1)
+  # Samples a word directly from the novel.
+  word <- sample(a_sep_lower, 1)
+
+  # Checks if word is in the most common words.
+  while (length(grepl(word, a_unique_1000, fixed = TRUE)) == 0) {
+    word <- sample(a_sep_lower, 1)
+  }
+
+  # Checks if punctuation. If so, it's printed without any spaces.
   if (length(grep("[,.;!:?]", word, fixed = FALSE)) > 0) {
     cat(word)
   } else {
