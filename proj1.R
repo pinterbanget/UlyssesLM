@@ -86,7 +86,7 @@ freq_threshold <- freq[order(freq, decreasing = TRUE)][m]
 freq_m <- freq >= freq_threshold
 
 # Stores the top m used words.
-a_unique_1000 <- a_unique[freq_m]
+a_unique_1000 <- a_unique[freq_m] #b in the instruction
 
 # Defines mlag, the maximum lag considered for this model.
 # To match instructions, the value 4 is set.
@@ -100,18 +100,30 @@ common_word_match <- match(a_sep_lower, a_unique_1000)
 # Continue until 7b) below this text.
 # Create function to create the shifted matrix
 create_shifted_matrix <- function(j, mlag=4){
-  n <- length(j) - mlag # Calculate number of rows in the matrix
+  n <- length(j) # Calculate number of rows in the matrix
 # Create the M matrix with the criteria
   M <- matrix(nrow = n, ncol = mlag + 1)
   return(M)
 }
 
 M<- create_shifted_matrix(common_word_match,mlag)
-
+print(nrow(M))
+for (i in 1:ncol(M)){
+  shift <- i-1
+  if(i == 1) {
+    M[, i] <- common_word_match
+  } else {
+    shifted_common_word_match <- c(rep(NA,times=shift),common_word_match[1:(length(common_word_match)-shift)])
+    M[,i]<-shifted_common_word_match
+  #M[,i] <- common_word_match
+  }
+}
 print(M)
 
+print(length(common_word_match))
 # 7b not done yet, continue later
-
+length1 <- length(M)
+print(length1)
 # For 8 and 9, continue under Part 2) Markov Model.
 
 # -------------------------------------------------------
