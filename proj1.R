@@ -114,12 +114,7 @@ for (i in 1:ncol(M)){
   M[,i]<-shifted_common_word_match
   #M[,i] <- common_word_match
 }
-print(M)
 
-print(length(common_word_match))
-# 7b not done yet, continue later
-length1 <- length(M)
-print(length1)
 # For 8 and 9, continue under Part 2) Markov Model.
 
 # -------------------------------------------------------
