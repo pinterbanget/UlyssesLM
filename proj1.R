@@ -110,13 +110,9 @@ M<- create_shifted_matrix(common_word_match,mlag)
 print(nrow(M))
 for (i in 1:ncol(M)){
   shift <- i-1
-  if(i == 1) {
-    M[, i] <- common_word_match
-  } else {
-    shifted_common_word_match <- c(rep(NA,times=shift),common_word_match[1:(length(common_word_match)-shift)])
-    M[,i]<-shifted_common_word_match
+  shifted_common_word_match <- c(rep(NA,times=shift),common_word_match[1:(length(common_word_match)-shift)])
+  M[,i]<-shifted_common_word_match
   #M[,i] <- common_word_match
-  }
 }
 print(M)
 
