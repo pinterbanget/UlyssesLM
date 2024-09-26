@@ -98,7 +98,19 @@ common_word_match <- match(a_sep_lower, a_unique_1000)
 # Todo: 
 # Code above is until 7a) in practical-1.pdf.
 # Continue until 7b) below this text.
+# Create function to create the shifted matrix
+create_shifted_matrix <- function(j, mlag=4){
+  n <- length(j) - mlag # Calculate number of rows in the matrix
+# Create the M matrix with the criteria
+  M <- matrix(nrow = n, ncol = mlag + 1)
+  return(M)
+}
 
+M<- create_shifted_matrix(common_word_match,mlag)
+
+print(M)
+
+# 7b not done yet, continue later
 
 # For 8 and 9, continue under Part 2) Markov Model.
 
