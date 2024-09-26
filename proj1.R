@@ -156,7 +156,7 @@ cat(a_unique_1000[first_word_index])
 cat("\nFrequency-based model generation result:")
 
 for (i in 1:nw) {
-  word <- sample(a_sep_lower, 1)
+  word <- sample(a_unique_1000, 1)
   if (length(grep("[,.;!:?]", word, fixed = FALSE)) > 0) {
     cat(word)
   } else {
