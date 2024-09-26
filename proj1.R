@@ -121,7 +121,7 @@ for (i in 1:ncol(M)){
   }
 }
 
-
+#cut the M matrix for the shifted values
 M_cut <- M[(mlag+1):nrow(M),]
 
 
@@ -130,6 +130,7 @@ length1 <- length(M)
 
 # For 8 and 9, continue under Part 2) Markov Model.
 
+#generate a random words index
 nw <- sample(common_word_match[!is.na(common_word_match)],1)
 print(a_sep_lower[nw])
 
