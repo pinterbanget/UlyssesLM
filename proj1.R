@@ -120,13 +120,20 @@ for (i in 1:ncol(M)){
   #M[,i] <- common_word_match
   }
 }
-print(M)
 
-print(length(common_word_match))
+
+M_cut <- M[(mlag+1):nrow(M),]
+
+
 # 7b not done yet, continue later
 length1 <- length(M)
-print(length1)
+
 # For 8 and 9, continue under Part 2) Markov Model.
+
+nw <- sample(common_word_match[!is.na(common_word_match)],1)
+print(a_sep_lower[nw])
+
+
 
 # -------------------------------------------------------
 # 2) Markov Model
