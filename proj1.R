@@ -11,9 +11,9 @@
 # from the novel.
 
 # Sets the working directories for the coders.
-# setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
+setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
 # setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
-setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
+# setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
 
 # Defines constants for the program.
 m <- 1000 # How many most common words are we using for the model?
@@ -93,29 +93,26 @@ freq_threshold <- freq[order(freq, decreasing = TRUE)][m]
 freq_m <- freq >= freq_threshold
 
 # Stores the top m used words.
-a_unique_1000 <- a_unique[freq_m] # b in the instructions
-
-b <- a_unique_1000
+a_unique_1000 <- a_unique[freq_m]
 
 # Finds words from text that are in the top m words.
-common_word_match <- match(a_sep_lower, a_unique_1000)
+b <- match(a_sep_lower, a_unique_1000)
 
 # Creates a matrix with the total number of words from the novel
 # as the row size, and (mlag + 1) as the column size.
-M <- matrix(nrow = length(common_word_match), ncol = (mlag + 1))
+M <- matrix(nrow = length(b), ncol = (mlag + 1))
 
 # Fills the matrix with the index of the most common words as the first column,
 # a shifted-by-1 index as the second column, a shifted-by-2 index as the third,
 # and so on.
 for (i in 1:ncol(M)){
-  shifted_common_word_match <- c(common_word_match[i:length(common_word_match)], rep(NA, times = i - 1))
-  M[, i] <- b[shifted_common_word_match]
+  shifted_b <- c(b[i:length(b)], rep(NA, times = i - 1))
+  M[, i] <- shifted_b
 }
 
 # Cuts the last mlag rows of the matrix, since it's filled with NA values.
 M <- M[1:(nrow(M) - mlag), ]
 
-print(M)
 
 # -------------------------------------------------------
 # 2) Markov Model
@@ -129,12 +126,12 @@ print(M)
 # ***
 # Section i) Markov Model Creation
 
-# First, we need to generate nw-spaced vector
-chain_word <- rep("",nw)
-# Generate the first word sample
-chain_word[1] <- sample(b[!is.na(b)], 1) # w in instruction
+# First, we need to generate a random first word.
+first_word_index <- sample(b[!is.na(b)], 1)
 
+# Then, we use "cat" to show the first word.
 cat("Markov model generation result: ")
+cat(a_unique_1000[first_word_index])
 
 # Todo:
 # 1. Continue the Markov model generation, using first_word as the basis
@@ -142,32 +139,13 @@ cat("Markov model generation result: ")
 # Find how to get indices of the previous word, then selecting by random.
 # Uncomment the following snippet to continue:
 
-for (i in 2:nw) {
-  for (j in mlag:1) {
-    if (i > j) {
-      word_before <- chain_word[(i-j):(i-1)] # Check the words before
-      # print(word_before)
-      # print(paste(word_before, collapse=""))
-      
-      # testing <- grep(word_before,M[,1:length(word_before)])
-      # testing <- (which(M[,1:length(word_before)] == word_before, arr.ind = TRUE))
-      next_word <- sample(b, 1) # Generate the next word randomly based on the word that have been generated, should be by the word before
-      
-      # NOTE:
-      # we need to use the matrix M in the question 7 as the guidance for the probability on selecting the next work,
-      # I managed to find the way to check previous word, but still struggling to find the way to match the word to the M matrix
-      # as far as I understand, the sequence of the word is important. we can set up a call thus i can explain on the approach
-      
-      if (!is.na(next_word)){
-        chain_word[i] <- next_word
-        break
-      }
-      
-    }
-  }
-}
+# for (i in 2:nw) {
+#   for (j in mlag:1) {
+#     if (i > j) {
 
-cat(chain_word)
+#     }
+#   }
+# }
 
 
 # ***
