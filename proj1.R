@@ -244,15 +244,16 @@ modified_b <- b
 
 # Checking through every word in our modified_b to compare its capitalized vs non-capitalized frequency
 for (t in 1:length(modified_b)){
-  if (length(freq_cap[which(a_unique_cap==modified_b[t])])==0){ # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
+  # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
+  if (length(freq_cap[which(a_unique_cap==modified_b[t])])==0){ # checking the frequency of non-capitalized word
     freq_low_cap <- 0
   } else {
-    freq_low_cap <-freq_cap[which(a_unique_cap==modified_b[t])]
+    freq_low_cap <-freq_cap[which(a_unique_cap==modified_b[t])] 
   }
-  if (length(freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))])==0){ 
+  if (length(freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))])==0){ # Checkin the frequency of the capitalized word
     freq_big_cap <- 0
   } else {
-    freq_big_cap <- freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))] # Checkin the frequency of the capitalized word
+    freq_big_cap <- freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))] 
   }
   if (freq_big_cap > freq_low_cap){
     modified_b[t] <- gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]) # if capitalized frequency occurs more often, then our modified_b is replaced with the capitalized word version
