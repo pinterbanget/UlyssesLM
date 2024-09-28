@@ -11,9 +11,9 @@
 # from the novel.
 
 # Sets the working directories for the coders.
-setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
+# setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
 # setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
-# setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
+setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
 
 # Defines constants for the program.
 m <- 1000 # How many most common words are we using for the model?
@@ -142,70 +142,73 @@ cat_punct <- function(word) {
   }
 }
 
+markov_chain <- function(b){
 
-# For the Markov model, we need to generate a nw-spaced vector to store
-# the result.
-chain_word <- rep(0, nw)
-
-# Then, generate the first word by sampling a word from the novel
-# (in the form of an index) which is in the top m words.
-chain_word[1] <- sample(common_word_match[!is.na(common_word_match)], 1)
-
-# Prints the title and the first word.
-cat("Markov model generation result: ")
-cat(b[chain_word[1]])
-
-# Loops over from 2 (second word) to nw.
-for (i in 2:nw) {
-  for (j in mlag:1) {
-    if (i > j) {
-      # Takes a sequence from the result.
-      w <- chain_word[(i - j):(i - 1)]
-
-      # Loops until the pool of potential next words has more than 1 element.
-      while (TRUE) {
-        limit <- length(w)
-
-        # Finds rows of M that starts with w.
-        if (limit > 1) {
-          to_select <- which(apply(M[, 1:limit], 1,
-                                   function(x) return(all(x == w))))
-        } else {
-          to_select <- which(M[, 1:limit] == w)
-        }
-
-        # Takes the value of the (limit + 1)th column to be put
-        # in a pool of potential next words.
-        next_word_pool <- M[to_select, limit + 1]
-
-        # Removes NA values from the pool.
-        next_word_pool <- next_word_pool[!is.na(next_word_pool)]
-
-        # Checks if the pool contains more than 1 element.
-        if (length(next_word_pool) > 1) {
-          break # Breaks from the loop.
-        } else {
-          # If not, remove the first element of w, if length(w) > 1.
-          if (length(w) > 1) {
-            w <- w[2:limit]
+  # For the Markov model, we need to generate a nw-spaced vector to store
+  # the result.
+  chain_word <- rep(0, nw)
+  
+  # Then, generate the first word by sampling a word from the novel
+  # (in the form of an index) which is in the top m words.
+  chain_word[1] <- sample(common_word_match[!is.na(common_word_match)], 1)
+  
+  # Prints the title and the first word.
+  cat("Markov model generation result: ",sep="\n")
+  cat(b[chain_word[1]])
+  
+  # Loops over from 2 (second word) to nw.
+  for (i in 2:nw) {
+    for (j in mlag:1) {
+      if (i > j) {
+        # Takes a sequence from the result.
+        w <- chain_word[(i - j):(i - 1)]
+  
+        # Loops until the pool of potential next words has more than 1 element.
+        while (TRUE) {
+          limit <- length(w)
+  
+          # Finds rows of M that starts with w.
+          if (limit > 1) {
+            to_select <- which(apply(M[, 1:limit], 1,
+                                     function(x) return(all(x == w))))
           } else {
-            # If w already contains 1 element, put all of the novel
-            # (with respect to the top m words) into the pool.
-            next_word_pool <- common_word_match[!is.na(common_word_match)]
-            break
+            to_select <- which(M[, 1:limit] == w)
+          }
+  
+          # Takes the value of the (limit + 1)th column to be put
+          # in a pool of potential next words.
+          next_word_pool <- M[to_select, limit + 1]
+  
+          # Removes NA values from the pool.
+          next_word_pool <- next_word_pool[!is.na(next_word_pool)]
+  
+          # Checks if the pool contains more than 1 element.
+          if (length(next_word_pool) > 1) {
+            break # Breaks from the loop.
+          } else {
+            # If not, remove the first element of w, if length(w) > 1.
+            if (length(w) > 1) {
+              w <- w[2:limit]
+            } else {
+              # If w already contains 1 element, put all of the novel
+              # (with respect to the top m words) into the pool.
+              next_word_pool <- common_word_match[!is.na(common_word_match)]
+              break
+            }
           }
         }
+  
+        # Picks a word from the pool at random, then puts it onto the result.
+        next_word <- sample(next_word_pool, 1)
+        chain_word[i] <- next_word
+        break
       }
-
-      # Picks a word from the pool at random, then puts it onto the result.
-      next_word <- sample(next_word_pool, 1)
-      chain_word[i] <- next_word
-      break
     }
+    # Prints the result, with respect to punctuations.
+    cat_punct(b[next_word])
   }
-  # Prints the result, with respect to punctuations.
-  cat_punct(b[next_word])
 }
+markov_chain(b)
 
 
 # ***
@@ -220,7 +223,7 @@ cat("\n\nFrequency-based model generation result:")
 for (i in 1:nw) {
   # Samples a word from the most common words, with the frequency of words
   # as the weights for the sampling.
-  word <- sample(b, 1, prob = freq[freq >= freq_threshold])
+  word <- sample(b[common_word_match[!is.na(common_word_match)]],1)
 
   # Checks if the generated word is a punctuation.
   # If so, it's printed without any spaces.
@@ -229,5 +232,7 @@ for (i in 1:nw) {
 
 # ***
 # Section iii) Case-Sensitive Markov Model Creation
-
-# Todo: get the initial Markov model going first lmaoooo
+# Modifying B
+a_unique_cap <- unique(a_sep)
+index_match_cap <- match(a_sep, a_unique_cap)
+freq_cap <- tabulate(index_match_cap)
