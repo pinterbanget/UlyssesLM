@@ -12,8 +12,8 @@
 
 # Sets the working directories for the coders.
 # setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
-# setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
-setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
+setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
+# setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
 
 # Defines constants for the program.
 m <- 1000 # How many most common words are we using for the model?
@@ -162,15 +162,20 @@ markov_chain <- function(b){
       if (i > j) {
         # Takes a sequence from the result.
         w <- chain_word[(i - j):(i - 1)]
-  
+        backtracked <- FALSE
         # Loops until the pool of potential next words has more than 1 element.
         while (TRUE) {
           limit <- length(w)
   
           # Finds rows of M that starts with w.
-          if (limit > 1) {
+          if (backtracked == TRUE){
+            to_select <- previous
+
+          }
+          else if (limit > 1) {
             to_select <- which(apply(M[, 1:limit], 1,
                                      function(x) return(all(x == w))))
+            previous <- to_select
           } else {
             to_select <- which(M[, 1:limit] == w)
           }
@@ -181,14 +186,16 @@ markov_chain <- function(b){
   
           # Removes NA values from the pool.
           next_word_pool <- next_word_pool[!is.na(next_word_pool)]
-  
+          
           # Checks if the pool contains more than 1 element.
           if (length(next_word_pool) > 1) {
             break # Breaks from the loop.
           } else {
             # If not, remove the first element of w, if length(w) > 1.
-            if (length(w) > 1) {
+            if (limit > 1) {
               w <- w[2:limit]
+              backtracked <- TRUE
+              
             } else {
               # If w already contains 1 element, put all of the novel
               # (with respect to the top m words) into the pool.
