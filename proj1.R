@@ -199,6 +199,7 @@ markov_chain <- function(b){
             } else {
               # If w already contains 1 element, put all of the novel
               # (with respect to the top m words) into the pool.
+              backtracked <- FALSE
               next_word_pool <- common_word_match[!is.na(common_word_match)]
               break
             }
