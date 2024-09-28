@@ -170,7 +170,7 @@ markov_chain <- function(b){
           # Finds rows of M that starts with w.
           if (backtracked == TRUE){
             to_select <- previous
-
+            backtracked <-FALSE
           }
           else if (limit > 1) {
             to_select <- which(apply(M[, 1:limit], 1,
@@ -199,7 +199,7 @@ markov_chain <- function(b){
             } else {
               # If w already contains 1 element, put all of the novel
               # (with respect to the top m words) into the pool.
-              backtracked <- FALSE
+              
               next_word_pool <- common_word_match[!is.na(common_word_match)]
               break
             }
