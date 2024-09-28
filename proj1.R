@@ -233,6 +233,33 @@ for (i in 1:nw) {
 # ***
 # Section iii) Case-Sensitive Markov Model Creation
 # Modifying B
+
+# Get the frequency of word but this time it is case-sensitive
 a_unique_cap <- unique(a_sep)
 index_match_cap <- match(a_sep, a_unique_cap)
 freq_cap <- tabulate(index_match_cap)
+
+# Initialize modified_b from b
+modified_b <- b
+
+# Checking through every word in our modified_b to compare its capitalized vs non-capitalized frequency
+for (t in 1:length(modified_b)){
+  if (length(freq_cap[which(a_unique_cap==modified_b[t])])==0){ # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
+    freq_low_cap <- 0
+  } else {
+    freq_low_cap <-freq_cap[which(a_unique_cap==modified_b[t])]
+  }
+  if (length(freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))])==0){ 
+    freq_big_cap <- 0
+  } else {
+    freq_big_cap <- freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))] # Checkin the frequency of the capitalized word
+  }
+  if (freq_big_cap > freq_low_cap){
+    modified_b[t] <- gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]) # if capitalized frequency occurs more often, then our modified_b is replaced with the capitalized word version
+  }
+  # if(freq_cap[which(a_unique_cap==modified_b[t])] < freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))]){
+  #   modified_b[t] <- gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t])
+  # }
+}
+
+markov_chain(modified_b)
