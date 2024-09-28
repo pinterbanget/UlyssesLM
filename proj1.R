@@ -127,43 +127,85 @@ M <- M[1:(nrow(M) - mlag), ]
 # ***
 # Section i) Markov Model Creation
 
-# First, we need to generate nw-spaced vector
-chain_word <- rep("", nw)
 
-# Then, generate the first word
-chain_word[1] <- sample(b[!is.na(b)], 1) # w in instruction
+cat_punct <- function(word) {
+  # Prints ("cat"s) the word with a space before the word
+  # if it's a word, and without if it's a punctuation.
+  # Input: string
+  # Output: none
 
+  # Checks if "word" is a punctuation.
+  if (length(grep("[,.;!:?]", word, fixed = FALSE)) > 0) {
+    cat(word) # Prints the punctuation directly.
+  } else {
+    cat(paste(" ", word, sep = "")) # Prints the word with a space beforehand.
+  }
+}
+
+
+# For the Markov model, we need to generate a nw-spaced vector to store
+# the result.
+chain_word <- rep(0, nw)
+
+# Then, generate the first word by sampling a word from the novel
+# (in the form of an index) which is in the top m words.
+chain_word[1] <- sample(common_word_match[!is.na(common_word_match)], 1)
+
+# Prints the title and the first word.
 cat("Markov model generation result: ")
+cat(b[chain_word[1]])
 
-# Todo:
-# 1. Continue the Markov model generation.
-# Find how to get indices of the previous word, then selecting by random.
-# Uncomment the following snippet to continue:
-
+# Loops over from 2 (second word) to nw.
 for (i in 2:nw) {
   for (j in mlag:1) {
     if (i > j) {
-      word_before <- chain_word[(i-j):(i-1)] # Check the words before
-      # print(word_before)
-      # print(paste(word_before, collapse=""))
+      # Takes a sequence from the result.
+      w <- chain_word[(i - j):(i - 1)]
 
-      # testing <- grep(word_before,M[,1:length(word_before)])
-      # testing <- (which(M[,1:length(word_before)] == word_before, arr.ind = TRUE))
-      next_word <- sample(b, 1) # Generate the next word randomly based on the word that have been generated, should be by the word before
+      # Loops until the pool of potential next words has more than 1 element.
+      while (TRUE) {
+        limit <- length(w)
 
-      # NOTE:
-      # we need to use the matrix M in the question 7 as the guidance for the probability on selecting the next work,
-      # I managed to find the way to check previous word, but still struggling to find the way to match the word to the M matrix
-      # as far as I understand, the sequence of the word is important. we can set up a call thus i can explain on the approach
-      
-      if (!is.na(next_word)){
-        chain_word[i] <- next_word
-        break
+        # Finds rows of M that starts with w.
+        if (limit > 1) {
+          to_select <- which(apply(M[, 1:limit], 1,
+                                   function(x) return(all(x == w))))
+        } else {
+          to_select <- which(M[, 1:limit] == w)
+        }
+
+        # Takes the value of the (limit + 1)th column to be put
+        # in a pool of potential next words.
+        next_word_pool <- M[to_select, limit + 1]
+
+        # Removes NA values from the pool.
+        next_word_pool <- next_word_pool[!is.na(next_word_pool)]
+
+        # Checks if the pool contains more than 1 element.
+        if (length(next_word_pool) > 1) {
+          break # Breaks from the loop.
+        } else {
+          # If not, remove the first element of w, if length(w) > 1.
+          if (length(w) > 1) {
+            w <- w[2:limit]
+          } else {
+            # If w already contains 1 element, put all of the novel
+            # (with respect to the top m words) into the pool.
+            next_word_pool <- common_word_match[!is.na(common_word_match)]
+            break
+          }
+        }
       }
+
+      # Picks a word from the pool at random, then puts it onto the result.
+      next_word <- sample(next_word_pool, 1)
+      chain_word[i] <- next_word
+      break
     }
   }
+  # Prints the result, with respect to punctuations.
+  cat_punct(b[next_word])
 }
-cat(chain_word)
 
 
 # ***
@@ -173,7 +215,7 @@ cat(chain_word)
 # utilising weighting based on the frequency of the words when taking
 # a sample.
 
-cat("\nFrequency-based model generation result:")
+cat("\n\nFrequency-based model generation result:")
 
 for (i in 1:nw) {
   # Samples a word from the most common words, with the frequency of words
@@ -182,11 +224,7 @@ for (i in 1:nw) {
 
   # Checks if the generated word is a punctuation.
   # If so, it's printed without any spaces.
-  if (length(grep("[,.;!:?]", word, fixed = FALSE)) > 0) {
-    cat(word)
-  } else {
-    cat(paste(" ", word, sep = ""))
-  }
+  cat_punct(word)
 }
 
 # ***
