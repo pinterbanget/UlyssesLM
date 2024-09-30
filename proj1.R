@@ -11,13 +11,8 @@
 # from the novel.
 
 # Sets the working directories for the coders.
-<<<<<<< HEAD
 setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
 # setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
-=======
-# setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
-setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
->>>>>>> b85d13b2316f81ade5635ec8c8b9eb81754d5c9c
 # setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
 
 # Defines constants for the program.
@@ -163,7 +158,7 @@ markov_chain <- function(b){
   cat("\n\nMarkov model generation result:\n")
   cat(b[chain_word[1]])
 
-  # Sets up flag to tell if it successfully generated the last word.
+  # Sets up flag to tell if the model successfully generated the last word.
   # This is helpful to cache options to pick from.
   last_word_success <- FALSE
 
@@ -173,7 +168,6 @@ markov_chain <- function(b){
       if (i > j) {
         # Takes a sequence from the result.
         w <- chain_word[(i - j):(i - 1)]
-<<<<<<< HEAD
 
         # Loops until the pool of potential next words has more than 1 element.
         while (TRUE) {
@@ -187,22 +181,8 @@ markov_chain <- function(b){
             to_select <- cache
           } else if (limit > 1) {
             # If not, finds rows of M that starts with w.
-=======
-        backtracked <- FALSE
-        # Loops until the pool of potential next words has more than 1 element.
-        while (TRUE) {
-          limit <- length(w)
-  
-          # Finds rows of M that starts with w.
-          if (backtracked == TRUE){
-            to_select <- previous
-            backtracked <-FALSE
-          }
-          else if (limit > 1) {
->>>>>>> b85d13b2316f81ade5635ec8c8b9eb81754d5c9c
             to_select <- which(apply(M[, 1:limit], 1,
                                      function(x) return(all(x == w))))
-            previous <- to_select
           } else {
             to_select <- which(M[, 1:limit] == w)
           }
@@ -213,11 +193,7 @@ markov_chain <- function(b){
 
           # Removes NA values from the pool.
           next_word_pool <- next_word_pool[!is.na(next_word_pool)]
-<<<<<<< HEAD
 
-=======
-          
->>>>>>> b85d13b2316f81ade5635ec8c8b9eb81754d5c9c
           # Checks if the pool contains more than 1 element.
           if (length(next_word_pool) > 1) {
             # Stores the rows of M.
@@ -231,22 +207,15 @@ markov_chain <- function(b){
             break
 
           } else {
-<<<<<<< HEAD
             # Since the pool isn't sufficient, sets the success flag.
             last_word_success <- FALSE
 
             # Cuts the first element of w, if w has more than 1 element.
-=======
-            # If not, remove the first element of w, if length(w) > 1.
->>>>>>> b85d13b2316f81ade5635ec8c8b9eb81754d5c9c
             if (limit > 1) {
               w <- w[2:limit]
-              backtracked <- TRUE
-              
             } else {
               # If w already contains 1 element, put all of the novel
               # (with respect to the top m words) into the pool.
-              
               next_word_pool <- common_word_match[!is.na(common_word_match)]
               break
             }
@@ -263,6 +232,8 @@ markov_chain <- function(b){
     cat_punct(b[next_word])
   }
 }
+
+markov_chain(b)
 
 
 # ***
@@ -298,7 +269,6 @@ freq_cap <- tabulate(index_match_cap)
 # Initializes modified_b from b
 modified_b <- b
 
-<<<<<<< HEAD
 # Checks through every word in our modified_b to compare its capitalized
 # vs non-capitalized frequency.
 for (t in 1:length(modified_b)) {
@@ -306,15 +276,6 @@ for (t in 1:length(modified_b)) {
     freq_low_cap <- 0
   } else {
     freq_low_cap <- freq_cap[which(a_unique_cap==modified_b[t])]
-=======
-# Checking through every word in our modified_b to compare its capitalized vs non-capitalized frequency
-for (t in 1:length(modified_b)){
-  # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
-  if (length(freq_cap[which(a_unique_cap==modified_b[t])])==0){ # checking the frequency of non-capitalized word
-    freq_low_cap <- 0
-  } else {
-    freq_low_cap <-freq_cap[which(a_unique_cap==modified_b[t])] 
->>>>>>> b85d13b2316f81ade5635ec8c8b9eb81754d5c9c
   }
   if (length(freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))])==0){ # Checkin the frequency of the capitalized word
     freq_big_cap <- 0
