@@ -11,9 +11,9 @@
 # from the novel.
 
 # Sets the working directories for the coders.
-setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
+# setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
 # setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
-# setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
+setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
 
 # Defines constants for the program.
 m <- 1000 # How many most common words are we using for the model?
