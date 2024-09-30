@@ -11,9 +11,9 @@
 # from the novel.
 
 # Sets the working directories for the coders.
-# setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
+setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
 # setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
-setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
+# setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
 
 # Defines constants for the program.
 m <- 1000 # How many most common words are we using for the model?
@@ -143,51 +143,75 @@ cat_punct <- function(word) {
 }
 
 markov_chain <- function(b){
+  # Simulates a Markov model to generate nw words from the top m used words.
+  # Input: vector of indices containing the top m used words
+  # Output: none
 
-  # For the Markov model, we need to generate a nw-spaced vector to store
-  # the result.
+  # Creates a nw-spaced vector to store the result.
   chain_word <- rep(0, nw)
-  
-  # Then, generate the first word by sampling a word from the novel
+
+  # Generates the first word by sampling a word from the novel
   # (in the form of an index) which is in the top m words.
   chain_word[1] <- sample(common_word_match[!is.na(common_word_match)], 1)
-  
+
   # Prints the title and the first word.
-  cat("Markov model generation result: ",sep="\n")
+  cat("\n\nMarkov model generation result:\n")
   cat(b[chain_word[1]])
-  
-  # Loops over from 2 (second word) to nw.
+
+  # Sets up flag to tell if it successfully generated the last word.
+  # This is helpful to cache options to pick from.
+  last_word_success <- FALSE
+
+  # Generates the next (nw - 1) words by looping from 2 to nw.
   for (i in 2:nw) {
     for (j in mlag:1) {
       if (i > j) {
         # Takes a sequence from the result.
         w <- chain_word[(i - j):(i - 1)]
-  
+
         # Loops until the pool of potential next words has more than 1 element.
         while (TRUE) {
           limit <- length(w)
-  
-          # Finds rows of M that starts with w.
-          if (limit > 1) {
+
+          # If the last word was successfully generated from the chain,
+          # loads the previous options from the matrix rows, where
+          # the rows contain the last generated word.
+          if (last_word_success) {
+            cache <- cache[M[cache, limit] == w[limit]]
+            to_select <- cache
+          } else if (limit > 1) {
+            # If not, finds rows of M that starts with w.
             to_select <- which(apply(M[, 1:limit], 1,
                                      function(x) return(all(x == w))))
           } else {
             to_select <- which(M[, 1:limit] == w)
           }
-  
+
           # Takes the value of the (limit + 1)th column to be put
           # in a pool of potential next words.
           next_word_pool <- M[to_select, limit + 1]
-  
+
           # Removes NA values from the pool.
           next_word_pool <- next_word_pool[!is.na(next_word_pool)]
-  
+
           # Checks if the pool contains more than 1 element.
           if (length(next_word_pool) > 1) {
-            break # Breaks from the loop.
+            # Stores the rows of M.
+            cache <- to_select
+
+            # Since a next word is guaranteed to be from this pool,
+            # sets the success flag.
+            last_word_success <- TRUE
+
+            # Breaks from the loop; pool generation is over.
+            break
+
           } else {
-            # If not, remove the first element of w, if length(w) > 1.
-            if (length(w) > 1) {
+            # Since the pool isn't sufficient, sets the success flag.
+            last_word_success <- FALSE
+
+            # Cuts the first element of w, if w has more than 1 element.
+            if (limit > 1) {
               w <- w[2:limit]
             } else {
               # If w already contains 1 element, put all of the novel
@@ -197,18 +221,17 @@ markov_chain <- function(b){
             }
           }
         }
-  
+
         # Picks a word from the pool at random, then puts it onto the result.
         next_word <- sample(next_word_pool, 1)
         chain_word[i] <- next_word
         break
       }
     }
-    # Prints the result, with respect to punctuations.
+    # Prints the word with respect to punctuations.
     cat_punct(b[next_word])
   }
 }
-markov_chain(b)
 
 
 # ***
@@ -218,36 +241,39 @@ markov_chain(b)
 # utilising weighting based on the frequency of the words when taking
 # a sample.
 
-cat("\n\nFrequency-based model generation result:")
+cat("\n\nFrequency-based model generation result:\n")
 
 for (i in 1:nw) {
   # Samples a word from the most common words, with the frequency of words
   # as the weights for the sampling.
-  word <- sample(b[common_word_match[!is.na(common_word_match)]],1)
+  word <- sample(b, 1, prob = freq[freq >= freq_threshold])
 
-  # Checks if the generated word is a punctuation.
-  # If so, it's printed without any spaces.
+  # Prints the word with respect to punctuations.
   cat_punct(word)
 }
 
+
 # ***
 # Section iii) Case-Sensitive Markov Model Creation
-# Modifying B
 
-# Get the frequency of word but this time it is case-sensitive
+# For this section, b needs to be modified to accommodate case-sensitiveness.
+
+# Gets the frequency of words, now with a case-sensitive approach
+# (i.e. we don't lowercase the words).
 a_unique_cap <- unique(a_sep)
 index_match_cap <- match(a_sep, a_unique_cap)
 freq_cap <- tabulate(index_match_cap)
 
-# Initialize modified_b from b
+# Initializes modified_b from b
 modified_b <- b
 
-# Checking through every word in our modified_b to compare its capitalized vs non-capitalized frequency
-for (t in 1:length(modified_b)){
+# Checks through every word in our modified_b to compare its capitalized
+# vs non-capitalized frequency.
+for (t in 1:length(modified_b)) {
   if (length(freq_cap[which(a_unique_cap==modified_b[t])])==0){ # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
     freq_low_cap <- 0
   } else {
-    freq_low_cap <-freq_cap[which(a_unique_cap==modified_b[t])]
+    freq_low_cap <- freq_cap[which(a_unique_cap==modified_b[t])]
   }
   if (length(freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))])==0){ 
     freq_big_cap <- 0
@@ -255,7 +281,8 @@ for (t in 1:length(modified_b)){
     freq_big_cap <- freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))] # Checkin the frequency of the capitalized word
   }
   if (freq_big_cap > freq_low_cap){
-    modified_b[t] <- gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]) # if capitalized frequency occurs more often, then our modified_b is replaced with the capitalized word version
+    modified_b[t] <- gsub(substr(modified_b[t],1,1),
+                          toupper(substr(modified_b[t],1,1)), modified_b[t]) # if capitalized frequency occurs more often, then our modified_b is replaced with the capitalized word version
   }
   # if(freq_cap[which(a_unique_cap==modified_b[t])] < freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))]){
   #   modified_b[t] <- gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t])
