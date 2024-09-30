@@ -176,7 +176,7 @@ markov_chain <- function(b){
           # If the last word was successfully generated from the chain,
           # loads the previous options from the matrix rows, where
           # the rows contain the last generated word.
-          if (last_word_success) {
+          if (last_word_success == TRUE) {
             cache <- cache[M[cache, limit] == w[limit]]
             to_select <- cache
           } else if (limit > 1) {
@@ -271,24 +271,25 @@ modified_b <- b
 
 # Checks through every word in our modified_b to compare its capitalized
 # vs non-capitalized frequency.
-for (t in 1:length(modified_b)) {
-  if (length(freq_cap[which(a_unique_cap==modified_b[t])])==0){ # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
+for (t in 1:length(b)) {
+  a_unique_low_cap_freq <- freq_cap[which(a_unique_cap==b[t])] # Finding the frequency of low_cap word in the full text by comparing the unique text word vs b
+  if (length(a_unique_low_cap_freq)==0){ # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
     freq_low_cap <- 0
   } else {
-    freq_low_cap <- freq_cap[which(a_unique_cap==modified_b[t])]
+    freq_low_cap <- a_unique_low_cap_freq
   }
-  if (length(freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))])==0){ # Checkin the frequency of the capitalized word
+  
+  a_unique_big_cap_freq <- freq_cap[which(a_unique_cap==sub(substr(b[t],1,1),toupper(substr(b[t],1,1)),b[t]))] # Finding the frequency of low_cap word in the full text by comparing the unique text word vs b
+  # We capitalize the first letter in the word by using sub and toupper function, replacing the first letter with its capitalized version as the which criteria
+  if (length(a_unique_big_cap_freq)==0){ # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
     freq_big_cap <- 0
   } else {
-    freq_big_cap <- freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))] 
+    freq_big_cap <- a_unique_big_cap_freq
   }
   if (freq_big_cap > freq_low_cap){
-    modified_b[t] <- gsub(substr(modified_b[t],1,1),
-                          toupper(substr(modified_b[t],1,1)), modified_b[t]) # if capitalized frequency occurs more often, then our modified_b is replaced with the capitalized word version
+    modified_b[t] <- sub(substr(b[t],1,1),
+                          toupper(substr(b[t],1,1)), b[t]) # if capitalized frequency occurs more often, then our b is replaced with the capitalized word version as modified_b
   }
-  # if(freq_cap[which(a_unique_cap==modified_b[t])] < freq_cap[which(a_unique_cap==gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t]))]){
-  #   modified_b[t] <- gsub(substr(modified_b[t],1,1),toupper(substr(modified_b[t],1,1)),modified_b[t])
-  # }
 }
 
 markov_chain(modified_b)
