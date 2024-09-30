@@ -279,7 +279,7 @@ for (t in 1:length(b)) {
     freq_low_cap <- a_unique_low_cap_freq
   }
   
-  a_unique_big_cap_freq <- freq_cap[which(a_unique_cap==sub(substr(b[t],1,1),toupper(substr(b[t],1,1)),b[t]))] # Finding the frequency of low_cap word in the full text by comparing the unique text word vs b
+  a_unique_big_cap_freq <- freq_cap[which(a_unique_cap==sub(substr(b[t],1,1),toupper(substr(b[t],1,1)),b[t]))] # Finding the frequency of big_cap word in the full text by comparing the unique text word vs b
   # We capitalize the first letter in the word by using sub and toupper function, replacing the first letter with its capitalized version as the which criteria
   if (length(a_unique_big_cap_freq)==0){ # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
     freq_big_cap <- 0
