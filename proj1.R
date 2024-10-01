@@ -12,8 +12,8 @@
 
 # Sets the working directories for the coders.
 # setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
-# setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
-setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
+setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
+#setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
 
 # Defines constants for the program.
 m <- 1000 # How many most common words are we using for the model?
@@ -77,43 +77,51 @@ a_sep <- split_funct(a)
 # ***
 # Section iii) Finding Most Used Words
 
-# Makes all words lowercase.
-a_sep_lower <- tolower(a_sep)
+Find_most_used_words <- function(){
 
-# Finds unique words from a_sep_lower.
-a_unique <- unique(a_sep_lower)
+  #This subroutine prepares the most used words data and places them into a matrix where each 
+  #column is the previous column shifted by 1.
 
-# Converts words from the text to indices corresponding to a_unique.
-index_match <- match(a_sep_lower, a_unique)
+  # Makes all words lowercase.
+  a_sep_lower <- tolower(a_sep)
 
-# Counts how many times each unique word appears,
-# then filters it to only show the top m words.
-freq <- tabulate(index_match)
-freq_threshold <- freq[order(freq, decreasing = TRUE)][m]
-freq_m <- freq >= freq_threshold
+  # Finds unique words from a_sep_lower.
+  a_unique <- unique(a_sep_lower)
 
-# Stores the top m used words.
-b <- a_unique[freq_m]
+  # Converts words from the text to indices corresponding to a_unique.
+  index_match <- match(a_sep_lower, a_unique)
 
-# Finds words from text that are in the top m words.
-common_word_match <- match(a_sep_lower, b)
+  # Counts how many times each unique word appears,
+  # then filters it to only show the top m words.
+  freq <- tabulate(index_match)
+  freq_threshold <- freq[order(freq, decreasing = TRUE)][m]
+  freq_m <- freq >= freq_threshold
 
-# Creates a matrix with the total number of words from the novel
-# as the row size, and (mlag + 1) as the column size.
-M <- matrix(nrow = length(common_word_match), ncol = (mlag + 1))
+  # Stores the top m used words.
+  b <- a_unique[freq_m]
 
-# Fills the matrix with the index of the most common words as the first column,
-# a shifted-by-1 index as the second column, a shifted-by-2 index as the third,
-# and so on.
-for (i in 1:ncol(M)){
-  shifted_cwm <- c(common_word_match[i:length(common_word_match)],
-                   rep(NA, times = i - 1))
-  M[, i] <- shifted_cwm
+  # Finds words from text that are in the top m words.
+  common_word_match <- match(a_sep_lower, b)
+
+  # Creates a matrix with the total number of words from the novel
+  # as the row size, and (mlag + 1) as the column size.
+  M <- matrix(nrow = length(common_word_match), ncol = (mlag + 1))
+
+  # Fills the matrix with the index of the most common words as the first column,
+  # a shifted-by-1 index as the second column, a shifted-by-2 index as the third,
+  # and so on.
+  for (i in 1:ncol(M)){
+    shifted_cwm <- c(common_word_match[i:length(common_word_match)],
+                    rep(NA, times = i - 1))
+    M[, i] <- shifted_cwm
+  }
+
+  # Cuts the last mlag rows of the matrix, since it's filled with NA values.
+  M <- M[1:(nrow(M) - mlag), ]
 }
 
-# Cuts the last mlag rows of the matrix, since it's filled with NA values.
-M <- M[1:(nrow(M) - mlag), ]
-
+# Calls the subroutine.
+Find_most_used_words
 
 # -------------------------------------------------------
 # 2) Markov Model
@@ -158,7 +166,7 @@ markov_chain <- function(b){
   cat("\n\nMarkov model generation result:\n")
   cat(b[chain_word[1]])
 
-  # Sets up flag to tell if the model successfully generated the last word.
+  # Sets up a flag to tell if the model successfully generated the last word.
   # This is helpful to cache options to pick from.
   last_word_success <- FALSE
 
