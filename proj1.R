@@ -3,12 +3,6 @@
 # Joseph Gill (s1910643)
 # Fransiskus Budi Kurnia Agung (s2670828)
 
-# This code will do two main tasks:
-# 1) Preprocess the data from the novel "Ulysses", to get
-# the most common words used to base the Markov model on, and
-# 2) Create the Markov model (along with other models)
-# based on data extracted from the novel.
-
 # Contributions:
 # Ryan (40%):
 # - split_punct function creation & implementation (q5)
@@ -28,6 +22,13 @@
 # - Markov model starting framework creation (q8)
 # - Case-sensitive Markov model creation & implementation (q10a)
 
+# This code will do two main tasks:
+# 1) Preprocess the data from the novel "Ulysses", to get
+# the most common words used to base the Markov model on, and
+# 2) Create the Markov model (along with other models)
+# based on data extracted from the novel.
+
+# ***
 # Sets the working directories for the coders.
 # setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
 # setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
