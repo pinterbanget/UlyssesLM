@@ -5,7 +5,7 @@
 
 # This code will do two main tasks:
 # 1) Preprocess the data from the novel "Ulysses", to get
-# the most common words used, to base the Markov model on, and
+# the most common words used to base the Markov model on, and
 # 2) Create the Markov model (along with other models)
 # based on data extracted from the novel.
 
@@ -58,6 +58,7 @@ a <- scan("4300-0.txt", what = "character", skip = 73, nlines = 32858 - 73,
 # Cleans data by removing "_(" from the file.
 a <- gsub("_(", "", a, fixed = TRUE)
 
+
 # ***
 # Section ii) Separating Punctuations (Questions 4-5)
 
@@ -94,9 +95,9 @@ split_funct <- function(vec) {
 # Separates punctuations from text a.
 a_sep <- split_funct(a)
 
+
 # ***
 # Section iii) Finding Most Used Words (Question 6)
-
 
 # Makes all words lowercase.
 a_sep_lower <- tolower(a_sep)
@@ -152,7 +153,6 @@ M <- M[1:(nrow(M) - mlag), ]
 
 # ***
 # Section i) Markov Model Creation (Question 8)
-
 
 cat_punct <- function(word) {
   # Prints ("cat"s) the word with a space before the word
@@ -227,14 +227,14 @@ markov_chain <- function(b, title) {
             cache <- to_select
 
             # Since a next word is guaranteed to be from this pool,
-            # sets the success flag.
+            # sets the success flag to TRUE.
             last_word_success <- TRUE
 
             # Breaks from the loop; pool generation is over.
             break
 
           } else {
-            # Since the pool isn't sufficient, sets the success flag.
+            # Since the pool isn't sufficient, sets the success flag to FALSE.
             last_word_success <- FALSE
 
             # Cuts the first element of w, if w has more than 1 element.
@@ -293,18 +293,17 @@ a_unique_cap <- unique(a_sep)
 index_match_cap <- match(a_sep, a_unique_cap)
 freq_cap <- tabulate(index_match_cap)
 
-# Initializes modified_b from b.
+# Initialises modified_b from b.
 modified_b <- b
 
-# Checks through every word in our modified_b to compare its capitalized
-# vs non-capitalized frequency.
+# Checks through every word in our modified_b to compare its capitalised
+# vs non-capitalised frequency.
 for (t in 1:length(b)) {
-
-  # Finding the frequency of lowercase words in the full text
+  # Finds the frequency of lowercase words in the full text
   # by comparing the unique text words vs b.
   a_unique_lower_freq <- freq_cap[which(a_unique_cap == b[t])]
 
-  # Validation to make sure it doesn't return integer(0).
+  # Validates to make sure it doesn't return integer(0).
   # If no lowercase words are found, return 0.
   if (length(a_unique_lower_freq) == 0) {
     freq_lower <- 0
@@ -312,13 +311,13 @@ for (t in 1:length(b)) {
     freq_lower <- a_unique_lower_freq
   }
 
-  # Finding the frequency of uppercase words in the full text
+  # Finds the frequency of uppercase words in the full text
   # by comparing the unique text words vs b.
   # We capitalise the first letter in the words with sub() and toupper(),
   # replacing the first letter with its capitalised version using which().
   a_unique_upper_freq <- freq_cap[which(a_unique_cap == sub(substr(b[t], 1, 1), toupper(substr(b[t], 1, 1)), b[t]))]
 
-  # Validation to make sure it doesn't return integer(0).
+  # Validates to make sure it doesn't return integer(0).
   # If no uppercase words are found, return 0.
   if (length(a_unique_upper_freq) == 0) {
     freq_upper <- 0
