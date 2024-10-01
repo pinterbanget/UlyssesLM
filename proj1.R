@@ -274,7 +274,7 @@ a_unique_cap <- unique(a_sep)
 index_match_cap <- match(a_sep, a_unique_cap)
 freq_cap <- tabulate(index_match_cap)
 
-# Initializes modified_b from b
+# Initializes modified_b from b.
 modified_b <- b
 
 # Checks through every word in our modified_b to compare its capitalized
@@ -303,7 +303,7 @@ for (t in 1:length(b)) {
   }
   if (freq_big_cap > freq_low_cap){
     modified_b[t] <- sub(substr(b[t],1,1),
-                          # if capitalized frequency occurs more often, then our b is replaced with the capitalized word version as modified_b
+                          # If capitalized frequency occurs more often, then our b is replaced with the capitalized word version as modified_b.
                           toupper(substr(b[t],1,1)), b[t]) 
   }
 }
