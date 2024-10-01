@@ -77,7 +77,7 @@ a_sep <- split_funct(a)
 # ***
 # Section iii) Finding Most Used Words
 
-Find_most_used_words <- function(){
+find_most_used_words <- function(){
 
   #This subroutine prepares the most used words data and places them into a matrix where each 
   #column is the previous column shifted by 1.
@@ -121,7 +121,7 @@ Find_most_used_words <- function(){
 }
 
 # Calls the subroutine.
-Find_most_used_words
+find_most_used_words
 
 # -------------------------------------------------------
 # 2) Markov Model
@@ -280,23 +280,31 @@ modified_b <- b
 # Checks through every word in our modified_b to compare its capitalized
 # vs non-capitalized frequency.
 for (t in 1:length(b)) {
-  a_unique_low_cap_freq <- freq_cap[which(a_unique_cap==b[t])] # Finding the frequency of low_cap word in the full text by comparing the unique text word vs b
-  if (length(a_unique_low_cap_freq)==0){ # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
+
+  # Finding the frequency of low_cap word in the full text by comparing the unique text word vs b.
+  a_unique_low_cap_freq <- freq_cap[which(a_unique_cap==b[t])]
+
+  # Validation to make sure it doesn't return integer(0), if no frequency found then return 0.  
+  if (length(a_unique_low_cap_freq)==0){ #
     freq_low_cap <- 0
   } else {
     freq_low_cap <- a_unique_low_cap_freq
   }
   
-  a_unique_big_cap_freq <- freq_cap[which(a_unique_cap==sub(substr(b[t],1,1),toupper(substr(b[t],1,1)),b[t]))] # Finding the frequency of big_cap word in the full text by comparing the unique text word vs b
-  # We capitalize the first letter in the word by using sub and toupper function, replacing the first letter with its capitalized version as the which criteria
-  if (length(a_unique_big_cap_freq)==0){ # Validation to make sure it doesn't return integer(0), if no frequency found then return 0
+  # Finding the frequency of big_cap word in the full text by comparing the unique text word vs b.
+  a_unique_big_cap_freq <- freq_cap[which(a_unique_cap==sub(substr(b[t],1,1),toupper(substr(b[t],1,1)),b[t]))]
+
+  # We capitalize the first letter in the word by using sub and toupper function, replacing the first letter with its capitalized version as the which criteria.
+  # Validation to make sure it doesn't return integer(0), if no frequency found then return 0.
+  if (length(a_unique_big_cap_freq)==0){ 
     freq_big_cap <- 0
   } else {
     freq_big_cap <- a_unique_big_cap_freq
   }
   if (freq_big_cap > freq_low_cap){
     modified_b[t] <- sub(substr(b[t],1,1),
-                          toupper(substr(b[t],1,1)), b[t]) # if capitalized frequency occurs more often, then our b is replaced with the capitalized word version as modified_b
+                          # if capitalized frequency occurs more often, then our b is replaced with the capitalized word version as modified_b
+                          toupper(substr(b[t],1,1)), b[t]) 
   }
 }
 
