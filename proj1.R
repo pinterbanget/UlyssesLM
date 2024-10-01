@@ -77,51 +77,47 @@ a_sep <- split_funct(a)
 # ***
 # Section iii) Finding Most Used Words
 
-find_most_used_words <- function(){
 
-  #This subroutine prepares the most used words data and places them into a matrix where each 
-  #column is the previous column shifted by 1.
+# Makes all words lowercase.
+a_sep_lower <- tolower(a_sep)
 
-  # Makes all words lowercase.
-  a_sep_lower <- tolower(a_sep)
+# Finds unique words from a_sep_lower.
+a_unique <- unique(a_sep_lower)
 
-  # Finds unique words from a_sep_lower.
-  a_unique <- unique(a_sep_lower)
+# Converts words from the text to indices corresponding to a_unique.
+index_match <- match(a_sep_lower, a_unique)
 
-  # Converts words from the text to indices corresponding to a_unique.
-  index_match <- match(a_sep_lower, a_unique)
+# Counts how many times each unique word appears,
+# then filters it to only show the top m words.
+freq <- tabulate(index_match)
+freq_threshold <- freq[order(freq, decreasing = TRUE)][m]
+freq_m <- freq >= freq_threshold
 
-  # Counts how many times each unique word appears,
-  # then filters it to only show the top m words.
-  freq <- tabulate(index_match)
-  freq_threshold <- freq[order(freq, decreasing = TRUE)][m]
-  freq_m <- freq >= freq_threshold
+# Stores the top m used words.
+b <- a_unique[freq_m]
 
-  # Stores the top m used words.
-  b <- a_unique[freq_m]
+# Finds words from text that are in the top m words.
+common_word_match <- match(a_sep_lower, b)
 
-  # Finds words from text that are in the top m words.
-  common_word_match <- match(a_sep_lower, b)
+# Creates a matrix with the total number of words from the novel
+# as the row size, and (mlag + 1) as the column size.
+M <- matrix(nrow = length(common_word_match), ncol = (mlag + 1))
 
-  # Creates a matrix with the total number of words from the novel
-  # as the row size, and (mlag + 1) as the column size.
-  M <- matrix(nrow = length(common_word_match), ncol = (mlag + 1))
-
-  # Fills the matrix with the index of the most common words as the first column,
-  # a shifted-by-1 index as the second column, a shifted-by-2 index as the third,
-  # and so on.
-  for (i in 1:ncol(M)){
-    shifted_cwm <- c(common_word_match[i:length(common_word_match)],
-                    rep(NA, times = i - 1))
-    M[, i] <- shifted_cwm
-  }
-
-  # Cuts the last mlag rows of the matrix, since it's filled with NA values.
-  M <- M[1:(nrow(M) - mlag), ]
+# Fills the matrix with the index of the most common words as the first column,
+# a shifted-by-1 index as the second column, a shifted-by-2 index as the third,
+# and so on.
+for (i in 1:ncol(M)){
+  shifted_cwm <- c(common_word_match[i:length(common_word_match)],
+                  rep(NA, times = i - 1))
+  M[, i] <- shifted_cwm
 }
 
-# Calls the subroutine.
-find_most_used_words
+# Cuts the last mlag rows of the matrix, since it's filled with NA values.
+M <- M[1:(nrow(M) - mlag), ]
+
+
+
+
 
 # -------------------------------------------------------
 # 2) Markov Model
