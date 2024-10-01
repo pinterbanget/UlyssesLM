@@ -4,11 +4,10 @@
 # Fransiskus Budi Kurnia Agung (s2670828)
 
 # This code will do two main tasks:
-# 1) Preprocess the data from the novel "Ulysses",
-# to get the most common words used, including
-# the probability of certain words appearing next, and
-# 2) Create the Markov model based on data extracted
-# from the novel.
+# 1) Preprocess the data from the novel "Ulysses", to get
+# the most common words used, to base the Markov model on, and
+# 2) Create the Markov model (along with other models)
+# based on data extracted from the novel.
 
 # Contributions:
 # Ryan (40%):
