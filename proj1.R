@@ -32,7 +32,7 @@
 # Sets the working directories for the coders.
 # setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
 # setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
-# setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
+# setwd("/Users/fransiskusbudi/uoe/ulysseslm") # Frans' path
 
 # Defines constants for the program.
 m <- 1000 # How many most common words are we using for the model?
@@ -315,7 +315,7 @@ for (t in 1:length(b)) {
   # Finds the frequency of uppercase words in the full text
   # by comparing the unique text words vs b.
   # We capitalise the first letter in the words with sub() and toupper(),
-  # replacing the first letter with its capitalised version using which().
+  # using which() to find the capitalised word frequency in the full text.
   a_unique_upper_freq <- freq_cap[which(a_unique_cap == sub(substr(b[t], 1, 1), toupper(substr(b[t], 1, 1)), b[t]))]
 
   # Validates to make sure it doesn't return integer(0).
