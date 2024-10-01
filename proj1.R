@@ -306,7 +306,7 @@ for (t in 1:length(b)) {
 
   # Validation to make sure it doesn't return integer(0).
   # If no lowercase words are found, return 0.
-  if (length(a_unique_low_freq) == 0) {
+  if (length(a_unique_lower_freq) == 0) {
     freq_lower <- 0
   } else {
     freq_lower <- a_unique_lower_freq
