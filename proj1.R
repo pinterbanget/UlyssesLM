@@ -1,7 +1,7 @@
 # UlyssesLM: a Markov model based on the novel "Ulysses".
-# Ryanson Jonathan s2570340
-# Joseph Gill s1910643
-# Fransiskus Budi Kurnia Agung s2670828
+# Ryanson Jonathan (s2570340)
+# Joseph Gill (s1910643)
+# Fransiskus Budi Kurnia Agung (s2670828)
 
 # This code will do two main tasks:
 # 1) Preprocess the data from the novel "Ulysses",
@@ -10,26 +10,47 @@
 # 2) Create the Markov model based on data extracted
 # from the novel.
 
+# Contributions:
+# Ryan (40%):
+# - split_punct function creation & implementation (q5)
+# - vector b of the m most common words creation (q6)
+# - M implementation, done together IRL (q7)
+# - optimised Markov model implementation (q8)
+# - frequency-based model implementation (q9)
+# - "pretty-print" punctuation function creation (q10b)
+
+# Joseph (30%):
+# - M implementation, done together IRL (q7)
+# - Markov model optimisation ideas creation (q8)
+# - Code cleaning and commenting
+
+# Frans (30%):
+# - M implementation, done together IRL (q7)
+# - Markov model starting framework creation (q8)
+# - Case-sensitive Markov model creation & implementation (q10a)
+
 # Sets the working directories for the coders.
 # setwd("/Users/rj/Documents/Codes/StatProg/ulysseslm") # Ryan's path
-setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
-#setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
+# setwd("/Users/josephgill/Documents/UlyssesLM") # Joseph's path
+# setwd("/Users/fransiskusbudi/ulysseslm") # Frans' path
 
 # Defines constants for the program.
 m <- 1000 # How many most common words are we using for the model?
 mlag <- 4 # The number of maximum "lag" for model generation
 nw <- 50 # How many words will the model generate?
 
+
+
 # -------------------------------------------------------
 # 1) Data Preprocessing
 # The codes below are for preprocessing the data. This includes:
-# i) file reading and text cleaning,
-# ii) separating punctuations from words,
-# iii) finding out most-used words, and
-# iv) creating token sequences.
+# i) file reading and text cleaning (q1-3),
+# ii) separating punctuations from words (q4-5),
+# iii) finding out most-used words (q6), and
+# iv) creating token sequences (q7).
 
 # ***
-# Section i) Reading and Cleaning Text
+# Section i) Reading and Cleaning Text (Questions 1-3)
 
 # Reads the file.
 a <- scan("4300-0.txt", what = "character", skip = 73, nlines = 32858 - 73,
@@ -39,7 +60,7 @@ a <- scan("4300-0.txt", what = "character", skip = 73, nlines = 32858 - 73,
 a <- gsub("_(", "", a, fixed = TRUE)
 
 # ***
-# Section ii) Separating Punctuations
+# Section ii) Separating Punctuations (Questions 4-5)
 
 split_funct <- function(vec) {
   # Separates punctuations from words.
@@ -75,7 +96,7 @@ split_funct <- function(vec) {
 a_sep <- split_funct(a)
 
 # ***
-# Section iii) Finding Most Used Words
+# Section iii) Finding Most Used Words (Question 6)
 
 
 # Makes all words lowercase.
@@ -95,6 +116,10 @@ freq_m <- freq >= freq_threshold
 
 # Stores the top m used words.
 b <- a_unique[freq_m]
+
+
+# ***
+# Section iv) Creating Token Sequences (Question 7)
 
 # Finds words from text that are in the top m words.
 common_word_match <- match(a_sep_lower, b)
@@ -117,19 +142,17 @@ M <- M[1:(nrow(M) - mlag), ]
 
 
 
-
-
 # -------------------------------------------------------
 # 2) Markov Model
 # The codes below are for creating a Markov model based on the text.
 # This includes:
-# i) Markov model creation
-# ii) Frequency-based model creation
-# iii) Case-sensitive Markov model creation (yes, we're going for the
-# extra 3 marks.)
+# i) Markov model creation (q8)
+# ii) Frequency-based model creation (q9)
+# iii) Case-sensitive Markov model creation (q10)
+# (yes, we're going for the extra 3 marks.)
 
 # ***
-# Section i) Markov Model Creation
+# Section i) Markov Model Creation (Question 8)
 
 
 cat_punct <- function(word) {
@@ -146,7 +169,7 @@ cat_punct <- function(word) {
   }
 }
 
-markov_chain <- function(b){
+markov_chain <- function(b, title) {
   # Simulates a Markov model to generate nw words from the top m used words.
   # Input: vector of indices containing the top m used words
   # Output: none
@@ -159,11 +182,12 @@ markov_chain <- function(b){
   chain_word[1] <- sample(common_word_match[!is.na(common_word_match)], 1)
 
   # Prints the title and the first word.
-  cat("\n\nMarkov model generation result:\n")
+  cat(title)
   cat(b[chain_word[1]])
 
   # Sets up a flag to tell if the model successfully generated the last word.
   # This is helpful to cache options to pick from.
+  # Caching the results of the last word generation saves around 50% of time.
   last_word_success <- FALSE
 
   # Generates the next (nw - 1) words by looping from 2 to nw.
@@ -237,17 +261,17 @@ markov_chain <- function(b){
   }
 }
 
-markov_chain(b)
+markov_chain(b, "\n\nMarkov model result (q8):\n")
 
 
 # ***
-# Section ii) Frequency-Based Model Creation
+# Section ii) Frequency-Based Model Creation (Question 9)
 
 # For this model, a sample is taken from the top m most used words,
 # utilising weighting based on the frequency of the words when taking
 # a sample.
 
-cat("\n\nFrequency-based model generation result:\n")
+cat("\n\nFrequency-based model result (q9):\n")
 
 for (i in 1:nw) {
   # Samples a word from the most common words, with the frequency of words
@@ -260,7 +284,7 @@ for (i in 1:nw) {
 
 
 # ***
-# Section iii) Case-Sensitive Markov Model Creation
+# Section iii) Case-Sensitive Markov Model Creation (Question 10)
 
 # For this section, b needs to be modified to accommodate case-sensitiveness.
 
@@ -277,31 +301,38 @@ modified_b <- b
 # vs non-capitalized frequency.
 for (t in 1:length(b)) {
 
-  # Finding the frequency of low_cap word in the full text by comparing the unique text word vs b.
-  a_unique_low_cap_freq <- freq_cap[which(a_unique_cap==b[t])]
+  # Finding the frequency of lowercase words in the full text
+  # by comparing the unique text words vs b.
+  a_unique_lower_freq <- freq_cap[which(a_unique_cap == b[t])]
 
-  # Validation to make sure it doesn't return integer(0), if no frequency found then return 0.  
-  if (length(a_unique_low_cap_freq)==0){ #
-    freq_low_cap <- 0
+  # Validation to make sure it doesn't return integer(0).
+  # If no lowercase words are found, return 0.
+  if (length(a_unique_low_freq) == 0) {
+    freq_lower <- 0
   } else {
-    freq_low_cap <- a_unique_low_cap_freq
+    freq_lower <- a_unique_lower_freq
   }
-  
-  # Finding the frequency of big_cap word in the full text by comparing the unique text word vs b.
-  a_unique_big_cap_freq <- freq_cap[which(a_unique_cap==sub(substr(b[t],1,1),toupper(substr(b[t],1,1)),b[t]))]
 
-  # We capitalize the first letter in the word by using sub and toupper function, replacing the first letter with its capitalized version as the which criteria.
-  # Validation to make sure it doesn't return integer(0), if no frequency found then return 0.
-  if (length(a_unique_big_cap_freq)==0){ 
-    freq_big_cap <- 0
+  # Finding the frequency of uppercase words in the full text
+  # by comparing the unique text words vs b.
+  # We capitalise the first letter in the words with sub() and toupper(),
+  # replacing the first letter with its capitalised version using which().
+  a_unique_upper_freq <- freq_cap[which(a_unique_cap == sub(substr(b[t], 1, 1), toupper(substr(b[t], 1, 1)), b[t]))]
+
+  # Validation to make sure it doesn't return integer(0).
+  # If no uppercase words are found, return 0.
+  if (length(a_unique_upper_freq) == 0) {
+    freq_upper <- 0
   } else {
-    freq_big_cap <- a_unique_big_cap_freq
+    freq_upper <- a_unique_upper_freq
   }
-  if (freq_big_cap > freq_low_cap){
-    modified_b[t] <- sub(substr(b[t],1,1),
-                          # If capitalized frequency occurs more often, then our b is replaced with the capitalized word version as modified_b.
-                          toupper(substr(b[t],1,1)), b[t]) 
+
+  # If the capitalised word occurs more often, then b is
+  # replaced with the capitalised word version as modified_b.
+  if (freq_upper > freq_lower) {
+    modified_b[t] <- sub(substr(b[t], 1, 1),
+                         toupper(substr(b[t], 1, 1)), b[t])
   }
 }
 
-markov_chain(modified_b)
+markov_chain(modified_b, "\n\nCase-sensitive Markov model result (q10):\n")
