@@ -335,3 +335,15 @@ for (t in 1:length(b)) {
 }
 
 markov_chain(modified_b, "\n\nCase-sensitive Markov model result (q10):\n")
+
+# final score: 10/18
+
+# The logic has gone wrong here. The for (j in mlag:1) loop is for dropping down the model order, but you do this separately inside the loop! Also the cache does not seem to be correct, as it is carried forward when I advances, without any way of dropping the dependence on the word just dropped from w. You can see the problem if you mtrace markov_chain using the debug package.
+# 
+# limit <- length(w) – don’t you know that this is j? Makes code less readable to create redundant information like this.
+# 
+# It is really bad practice for functions to use data not supplied in the argument list. This is a really common way to write non-portable code that does not work as intended
+# 
+# Functions should start with a comment describing inputs, purpose and outputs – you have some initial comments, but they are a bit vague and not so useful for someone coming to this for the first time.
+# 
+# Initial statement of contributions can be shorter if it’s more or less fair, as here. However initial comment explaining what this is all about should be aimed at someone who has not seen the practical sheet.
